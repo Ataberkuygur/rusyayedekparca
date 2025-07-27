@@ -8,7 +8,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const isServer = typeof window === 'undefined'
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  if (isServer) {
+  if (isServer && process.env.NODE_ENV !== 'production') {
     console.error('Missing Supabase environment variables. Please check your .env.local file.')
     console.log('Required variables:')
     console.log('- NEXT_PUBLIC_SUPABASE_URL')
@@ -16,9 +16,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
     console.log('See .env.example for setup instructions.')
   }
   
-  // Only throw error in production
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('Missing Supabase environment variables')
+  // Only warn in production builds, don't throw error to allow builds to complete
+  if (process.env.NODE_ENV === 'production' && isServer) {
+    console.warn('Warning: Missing Supabase environment variables in production build')
   }
 }
 
